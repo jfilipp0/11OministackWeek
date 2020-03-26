@@ -1,11 +1,38 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
+import React, { useState } from 'react'
+import {Link, useHistory} from 'react-router-dom'
 import { FiArrowLeft } from 'react-icons/fi'
 
 import './style.css'
+import api from '../../services/api'
 import logoSvg from '../../assets/logo.svg'
 
 export default function NewIncident() {
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [value, setValue] = useState('')
+    const history = useHistory()
+
+    const gnoId = localStorage.getItem('gnoId')
+
+    async function handleNewIncident(e) {
+        e.preventDefault()
+
+        const data = {
+            title, description, value,
+        }
+
+        try {
+            await api.post('incidents', data, {
+                headers: {
+                    Authorization: gnoId,
+                }
+            })
+            history.push('/profile')
+        } catch (err) {
+            alert('Ops something sounds wrong, try it again')
+        }
+    }
+
     return (
         <div className="new-incident-container">
             <div className="content">
@@ -19,10 +46,13 @@ export default function NewIncident() {
                         voltar para home
                     </Link>
                 </section>
-                <form >
-                    <input placeholder="Title" />
-                    <textarea placeholder="Description" />
-                    <input placeholder="Value" />
+                <form onSubmit={handleNewIncident}>
+                    <input placeholder="Title" 
+                    value={title} onChange={e => setTitle(e.target.value)} />
+                    <textarea placeholder="Description" 
+                    value={description} onChange={e => setDescription(e.target.value)} />
+                    <input placeholder="Value" 
+                    value={value} onChange={e => setValue(e.target.value)} />
 
                     <button className="button" type="submit">create it</button>
                 </form>
