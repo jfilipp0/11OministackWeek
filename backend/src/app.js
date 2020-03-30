@@ -1,14 +1,17 @@
 const cors = require('cors')
+const {errors} = require('celebrate')
 const express = require('express')
 const routes = require('./routes')
 
 const app = express()
 
-app.use(cors({}))//{origin: 'http://example.com'}
+app.use(cors({})) //{origin: 'http://example.com'}
 app.use(express.json())
 app.use(routes)
 
-app.listen(3333)
+app.use(errors()) // celebrate to read the errors
+
+module.exports = app
 
 
 // Infos 
